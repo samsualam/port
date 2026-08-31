@@ -3,29 +3,30 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const experiences = [
   {
     num: '01',
     company: 'Freelance',
-    role: 'Full Stack Web Developer',
-    desc: 'Developed and delivered custom web applications for various clients across different industries. Handled everything from UI/UX design to backend development, database architecture, and cloud deployment.',
+    role: { en: 'Full Stack Web Developer', id: 'Pengembang Web Full Stack' },
+    desc: { en: 'Developed and delivered custom web applications for various clients across different industries. Handled everything from UI/UX design to backend development, database architecture, and cloud deployment.', id: 'Mengembangkan dan mengirimkan aplikasi web kustom untuk berbagai klien di berbagai industri. Menangani everything dari desain UI/UX hingga pengembangan backend, arsitektur database, dan deployment cloud.' },
     tags: ['React', 'Next.js', 'Laravel', 'MySQL', 'Tailwind CSS'],
     period: '2023 — Present',
   },
   {
     num: '02',
     company: 'PT. XYZ Technology',
-    role: 'Junior Web Developer',
-    desc: 'Built and maintained internal web tools and client-facing applications. Collaborated with senior developers to implement new features, optimize performance, and fix production bugs in a fast-paced agile environment.',
+    role: { en: 'Junior Web Developer', id: 'Pengembang Web Junior' },
+    desc: { en: 'Built and maintained internal web tools and client-facing applications. Collaborated with senior developers to implement new features, optimize performance, and fix production bugs in a fast-paced agile environment.', id: 'Membangun dan memelihara alat web internal dan aplikasi yang dihadapi klien. Berkolaborasi dengan pengembang senior untuk mengimplementasikan fitur baru, mengoptimalkan performa, dan memperbaiki bug produksi dalam lingkungan agile yang cepat.' },
     tags: ['Vue.js', 'PHP', 'REST API', 'Git'],
     period: '2022 — 2023',
   },
   {
     num: '03',
     company: 'Universitas Negeri Gorontalo',
-    role: 'Informatics Engineering — S1',
-    desc: "Bachelor's degree in Informatics Engineering. Focused on web development, algorithms, data structures, database systems, and software engineering principles. Active in campus tech community.",
+    role: { en: 'Informatics Engineering — S1', id: 'Teknik Informatika — S1' },
+    desc: { en: "Bachelor's degree in Informatics Engineering. Focused on web development, algorithms, data structures, database systems, and software engineering principles. Active in campus tech community.", id: "Sarjana Teknik Informatika. Berfokus pada pengembangan web, algoritma, struktur data, sistem database, dan prinsip rekayasa perangkat lunak. Aktif di komunitas teknologi kampus." },
     tags: ['Algorithms', 'Database', 'Web Development', 'OOP'],
     period: '2020 — 2024',
   },
@@ -34,6 +35,7 @@ const experiences = [
 export default function StackExperience() {
   const wrapRef  = useRef<HTMLElement>(null);
   const areaRef  = useRef<HTMLDivElement>(null);
+  const { lang, t } = useLanguage();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -97,11 +99,11 @@ export default function StackExperience() {
           <div>
             <span className="eyebrow">/experience</span>
             <h2 className="h-display h-lg">
-              Work <span className="outline">history</span>
+              {t('experience.heading').split(' ')[0]} <span className="outline">{t('experience.heading').split(' ')[1]}</span>
             </h2>
           </div>
           <p className="lede" style={{ maxWidth: '34ch' }}>
-            3+ years building web applications across freelance, internship, and full-time roles.
+            {t('experience.lede')}
           </p>
         </div>
 
@@ -117,9 +119,9 @@ export default function StackExperience() {
                 <div>
                   <div className="stack-title">
                     <h3>{exp.company}</h3>
-                    <span className="role">{exp.role}</span>
+                    <span className="role">{typeof exp.role === 'string' ? exp.role : exp.role[lang]}</span>
                   </div>
-                  <p className="stack-desc">{exp.desc}</p>
+                  <p className="stack-desc">{typeof exp.desc === 'string' ? exp.desc : exp.desc[lang]}</p>
                   <div className="stack-tags">
                     {exp.tags.map((tag) => (
                       <span key={tag}>{tag}</span>

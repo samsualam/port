@@ -67,6 +67,7 @@ const Shuffle = ({
       if (!ref.current || !text || !fontsLoaded) return;
 
       if (respectReducedMotion && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setReady(true);
         onShuffleComplete?.();
         return;
       }
@@ -77,7 +78,7 @@ const Shuffle = ({
       if (userHasFont) {
         computedFont = style.fontFamily || getComputedStyle(el).fontFamily || '';
       } else {
-        computedFont = `'Press Start 2P', sans-serif`;
+        computedFont = getComputedStyle(el).fontFamily || `'Press Start 2P', system-ui`;
       }
 
       const start = scrollTriggerStart;
@@ -128,6 +129,56 @@ const Shuffle = ({
 
         const rolls = Math.max(1, Math.floor(shuffleTimes));
         const rand = set => set.charAt(Math.floor(Math.random() * set.length)) || '';
+        const isVertical = shuffleDirection === 'up' || shuffleDirection === 'down';
+        const metricsContext = isVertical ? document.createElement('canvas').getContext('2d') : null;
+
+        const measureVerticalCell = (node, lineBoxHeight) => {
+          const computed = window.getComputedStyle(node);
+          let fontHeight = 0;
+
+          if (metricsContext) {
+            metricsContext.font = [
+              computed.fontStyle,
+              computed.fontVariant,
+              computed.fontWeight,
+              computed.fontSize,
+              computed.fontFamily
+            ].join(' ');
+
+            const sample = `${node.textContent || 'M'}${scrambleCharset}`;
+            const metrics = metricsContext.measureText(sample);
+            const ascent = metrics.fontBoundingBoxAscent;
+            const descent = metrics.fontBoundingBoxDescent;
+            if (Number.isFinite(ascent) && Number.isFinite(descent)) fontHeight = ascent + descent;
+          }
+
+          if (!fontHeight) {
+            const probe = node.cloneNode(true);
+            probe.textContent = `${node.textContent || 'M'}${scrambleCharset}`;
+            Object.assign(probe.style, {
+              position: 'absolute',
+              visibility: 'hidden',
+              pointerEvents: 'none',
+              width: 'auto',
+              height: 'auto',
+              whiteSpace: 'nowrap',
+              lineHeight: 'normal',
+              fontFamily: computed.fontFamily,
+              fontSize: computed.fontSize,
+              fontStyle: computed.fontStyle,
+              fontVariant: computed.fontVariant,
+              fontWeight: computed.fontWeight,
+              fontStretch: computed.fontStretch
+            });
+            document.body.appendChild(probe);
+            fontHeight = probe.getBoundingClientRect().height;
+            probe.remove();
+          }
+
+          const overflow = Math.max(0, Math.ceil(fontHeight - lineBoxHeight));
+          const padTop = Math.floor(overflow / 2);
+          return { cellHeight: lineBoxHeight + overflow, padTop, padBottom: overflow - padTop };
+        };
 
         chars.forEach(ch => {
           const parent = ch.parentElement;
@@ -137,39 +188,63 @@ const Shuffle = ({
           const h = ch.getBoundingClientRect().height;
           if (!w) return;
 
+          const { cellHeight, padTop, padBottom } = isVertical
+            ? measureVerticalCell(ch, h)
+            : { cellHeight: h, padTop: 0, padBottom: 0 };
+
           const wrap = document.createElement('span');
           wrap.className = 'inline-block overflow-hidden text-left';
           Object.assign(wrap.style, {
             width: w + 'px',
-            height: shuffleDirection === 'up' || shuffleDirection === 'down' ? h + 'px' : 'auto',
+            height: isVertical ? cellHeight + 'px' : 'auto',
+            marginTop: isVertical ? -padTop + 'px' : '0',
+            marginBottom: isVertical ? -padBottom + 'px' : '0',
             verticalAlign: 'bottom'
           });
 
           const inner = document.createElement('span');
           inner.className =
             'inline-block will-change-transform origin-left transform-gpu ' +
-            (shuffleDirection === 'up' || shuffleDirection === 'down' ? 'whitespace-normal' : 'whitespace-nowrap');
+            (isVertical ? 'whitespace-normal' : 'whitespace-nowrap');
 
           parent.insertBefore(wrap, ch);
           wrap.appendChild(inner);
 
           const firstOrig = ch.cloneNode(true);
-          firstOrig.className =
-            'text-left ' + (shuffleDirection === 'up' || shuffleDirection === 'down' ? 'block' : 'inline-block');
-          Object.assign(firstOrig.style, { width: w + 'px', fontFamily: computedFont });
+          firstOrig.className = 'text-left ' + (isVertical ? 'flex' : 'inline-block');
+          Object.assign(firstOrig.style, {
+            alignItems: isVertical ? 'center' : '',
+            justifyContent: isVertical ? 'center' : '',
+            height: isVertical ? cellHeight + 'px' : '',
+            lineHeight: isVertical ? h + 'px' : '',
+            width: w + 'px',
+            fontFamily: computedFont
+          });
 
           ch.setAttribute('data-orig', '1');
-          ch.className =
-            'text-left ' + (shuffleDirection === 'up' || shuffleDirection === 'down' ? 'block' : 'inline-block');
-          Object.assign(ch.style, { width: w + 'px', fontFamily: computedFont });
+          ch.className = 'text-left ' + (isVertical ? 'flex' : 'inline-block');
+          Object.assign(ch.style, {
+            alignItems: isVertical ? 'center' : '',
+            justifyContent: isVertical ? 'center' : '',
+            height: isVertical ? cellHeight + 'px' : '',
+            lineHeight: isVertical ? h + 'px' : '',
+            width: w + 'px',
+            fontFamily: computedFont
+          });
 
           inner.appendChild(firstOrig);
           for (let k = 0; k < rolls; k++) {
             const c = ch.cloneNode(true);
             if (scrambleCharset) c.textContent = rand(scrambleCharset);
-            c.className =
-              'text-left ' + (shuffleDirection === 'up' || shuffleDirection === 'down' ? 'block' : 'inline-block');
-            Object.assign(c.style, { width: w + 'px', fontFamily: computedFont });
+            c.className = 'text-left ' + (isVertical ? 'flex' : 'inline-block');
+            Object.assign(c.style, {
+              alignItems: isVertical ? 'center' : '',
+              justifyContent: isVertical ? 'center' : '',
+              height: isVertical ? cellHeight + 'px' : '',
+              lineHeight: isVertical ? h + 'px' : '',
+              width: w + 'px',
+              fontFamily: computedFont
+            });
             inner.appendChild(c);
           }
           inner.appendChild(ch);
@@ -195,11 +270,11 @@ const Shuffle = ({
             startX = 0;
             finalX = -steps * w;
           } else if (shuffleDirection === 'down') {
-            startY = -steps * h;
+            startY = -steps * cellHeight;
             finalY = 0;
           } else if (shuffleDirection === 'up') {
             startY = 0;
-            finalY = -steps * h;
+            finalY = -steps * cellHeight;
           }
 
           if (shuffleDirection === 'left' || shuffleDirection === 'right') {
@@ -343,20 +418,7 @@ const Shuffle = ({
 
       const st = ScrollTrigger.create({ trigger: el, start, once: triggerOnce, onEnter: create });
 
-      // Fallback: hero at top is already above start line -> onEnter never fires, so force create if in viewport
-      const rect = el.getBoundingClientRect();
-      const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
-      if (inViewport) {
-        // delay 80ms to allow fonts/layout to settle, but trigger immediately if still not ready
-        const t = setTimeout(() => {
-          if (!playingRef.current && wrappersRef.current.length === 0) create();
-        }, 80);
-        st.vars = st.vars || {};
-        st._fallbackTimer = t;
-      }
-
       return () => {
-        if (st._fallbackTimer) clearTimeout(st._fallbackTimer);
         st.kill();
         removeHover();
         teardown();

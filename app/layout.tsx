@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Montserrat, DM_Sans } from "next/font/google";
+import { Montserrat, DM_Sans, Press_Start_2P } from "next/font/google";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -14,6 +15,12 @@ const dmSans = DM_Sans({
   variable: "--font-dm-sans",
 });
 
+const pressStart = Press_Start_2P({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-press-start",
+});
+
 export const metadata: Metadata = {
   title: "Samsu Alam — Full Stack Developer",
   description:
@@ -24,9 +31,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`${montserrat.variable} ${dmSans.variable}`}>
-        {children}
+    <html lang="id">
+      <body className={`${montserrat.variable} ${dmSans.variable} ${pressStart.variable}`}>
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -4,21 +4,28 @@ import { useEffect, useRef, Suspense, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { ErrorBoundary } from './ErrorBoundary';
 import Shuffle from '@/components/Shuffle';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Semua komponen berat dijadikan dynamic (client-only, no SSR)
 const SideRays = dynamic(() => import('@/components/SideRays'), { ssr: false });
 const PixelBlast = dynamic(() => import('@/components/PixelBlast'), { ssr: false });
 const HorizontalScroll = dynamic(() => import('./HorizontalScroll'), { ssr: false });
-const StackExperience = dynamic(() => import('./StackExperience'), { ssr: false });
+const ProcessSection = dynamic(() => import('./ProcessSection'), { ssr: false });
 
 export default function ClientShell() {
   const progressRef = useRef<HTMLDivElement>(null);
   const [heroImgError, setHeroImgError] = useState(false);
+  const { lang, setLang, t } = useLanguage();
 
   /* ── Hero load animation ─────────────────────────────────── */
   useEffect(() => {
     document.body.classList.add('is-loaded');
   }, []);
+
+  /* ── Update html lang attribute ─────────────────────────── */
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   /* ── Nav scroll effect ──────────────────────────────────── */
   useEffect(() => {
@@ -98,16 +105,25 @@ export default function ClientShell() {
       <nav className="nav" id="site-nav">
         <a className="nav-logo" href="#">[ SAMSU ALAM ]</a>
         <ul className="nav-links" id="nav-links">
-          <li><a href="#">/home</a></li>
-          <li><a href="#work">/work</a></li>
-          <li><a href="#experience">/experience</a></li>
-          <li><a href="#contact">/contact</a></li>
+          <li><a href="#">{t('nav.home')}</a></li>
+          <li><a href="#work">{t('nav.work')}</a></li>
+          <li><a href="#experience">{t('nav.experience')}</a></li>
+          <li><a href="#contact">{t('nav.contact')}</a></li>
           <li>
             <a className="nav-cta" href="mailto:samsualam@email.com">
-              Let's talk →
+              {t('nav.cta')}
             </a>
           </li>
         </ul>
+        <button
+          className="nav-lang"
+          onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
+          aria-label="Toggle language"
+        >
+          <span className={lang === 'en' ? 'is-active' : ''}>EN</span>
+          <span className="nav-lang-sep">/</span>
+          <span className={lang === 'id' ? 'is-active' : ''}>ID</span>
+        </button>
         <button
           className="nav-toggle"
           id="nav-toggle"
@@ -192,9 +208,7 @@ export default function ClientShell() {
               onError={() => setHeroImgError(true)}
               style={{ display: heroImgError ? 'none' : 'block' }}
             />
-            {heroImgError && (
-              <div className="hero-bg-fallback" aria-hidden="true" />
-            )}
+            {heroImgError && <div className="hero-bg-fallback" aria-hidden="true" />}
           </div>
           <div className="hero-veil" />
 
@@ -203,79 +217,77 @@ export default function ClientShell() {
           </div>
 
           <div className="hero-inner">
-            <span className="mask">
-              <Shuffle
-                text="SAMSU"
-                shuffleDirection="right"
-                duration={0.35}
-                animationMode="evenodd"
-                shuffleTimes={1}
-                ease="power3.out"
-                stagger={0.03}
-                threshold={1}
-                rootMargin="0px"
-                triggerOnce={true}
-                triggerOnHover
-                respectReducedMotion={true}
-                loop={false}
-                loopDelay={0}
-                tag="span"
-                className="hero-kicker !text-[clamp(13px,1.8vw,22px)] !leading-none"
-                style={{ display: 'block' }}
-                onShuffleComplete={() => {}}
-                colorFrom=""
-                colorTo=""
-              />
-            </span>
-            <span className="mask">
-              <Shuffle
-                text="ALAM"
-                shuffleDirection="right"
-                duration={0.35}
-                animationMode="evenodd"
-                shuffleTimes={1}
-                ease="power3.out"
-                stagger={0.03}
-                threshold={1}
-                rootMargin="0px"
-                triggerOnce={true}
-                triggerOnHover
-                respectReducedMotion={true}
-                loop={false}
-                loopDelay={0}
-                tag="span"
-                onShuffleComplete={() => {}}
-                colorFrom=""
-                colorTo=""
-                className="!text-[clamp(48px,12vw,164px)] !leading-[0.88]"
-                style={{
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 800,
-                  letterSpacing: '-0.02em',
-                  color: '#ffffff',
-                  display: 'block'
-                }}
-              />
-            </span>
-
-            <div className="hero-tag">
-              <i className="bar" />
-              <span>
-                Full Stack Developer · UI Designer · <b>Builder</b>
+            <div className="flex flex-wrap items-baseline gap-2 md:gap-4">
+              <span className="mask">
+                <Shuffle
+                  text="SAMSU"
+                  shuffleDirection="right"
+                  duration={0.35}
+                  animationMode="evenodd"
+                  shuffleTimes={1}
+                  ease="power3.out"
+                  stagger={0.03}
+                  threshold={1}
+                  rootMargin="0px"
+                  triggerOnce={true}
+                  triggerOnHover
+                  respectReducedMotion={true}
+                  loop={false}
+                  loopDelay={0}
+                  tag="span"
+                  className="font-press-start !text-[clamp(40px,7vw,80px)] !leading-none"
+                  style={{ color: '#FFD700', display: 'inline-block', fontWeight: 400 }}
+                  onShuffleComplete={() => {}}
+                  colorFrom=""
+                  colorTo=""
+                />
+              </span>
+              <span className="mask">
+                <Shuffle
+                  text="ALAM"
+                  shuffleDirection="right"
+                  duration={0.35}
+                  animationMode="evenodd"
+                  shuffleTimes={1}
+                  ease="power3.out"
+                  stagger={0.03}
+                  threshold={1}
+                  rootMargin="0px"
+                  triggerOnce={true}
+                  triggerOnHover
+                  respectReducedMotion={true}
+                  loop={false}
+                  loopDelay={0}
+                  tag="span"
+                  onShuffleComplete={() => {}}
+                  colorFrom=""
+                  colorTo=""
+                  className="font-press-start !text-[clamp(40px,7vw,80px)] !leading-none"
+                  style={{
+                    fontWeight: 400,
+                    letterSpacing: '-0.02em',
+                    color: '#FFD700',
+                    display: 'inline-block'
+                  }}
+                />
               </span>
             </div>
 
+            <div className="hero-tag">
+              <i className="bar" />
+              <span dangerouslySetInnerHTML={{ __html: t('hero.role') }} />
+            </div>
+
             <p className="hero-blurb">
-              3+ years converting ideas into real digital products — spanning
-              frontend, backend, and everything in between.
+               {t('hero.blurb')}
             </p>
 
             <div className="hero-actions">
               <a className="btn btn-primary" href="/cv.pdf" download>
-                Download CV ↓
+                {t('hero.cv')}
               </a>
               <a className="btn btn-ghost" href="#work">
-                /view work
+                {t('hero.viewWork')}
               </a>
             </div>
           </div>
@@ -290,22 +302,22 @@ export default function ClientShell() {
       {/* ── MARQUEE 1 ───────────────────────────────────────── */}
       <div className="marquee" aria-hidden="true">
         <div className="marquee-track">
-          <span>Full Stack Development</span><span>//</span>
-          <span>UI Design</span><span>//</span>
-          <span>API Integration</span><span>//</span>
-          <span>Database Architecture</span><span>//</span>
-          <span>React & Next.js</span><span>//</span>
-          <span>Laravel & Node.js</span><span>//</span>
-          <span>Responsive Design</span><span>//</span>
-          <span>AI Integration</span><span>//</span>
-          <span>Full Stack Development</span><span>//</span>
-          <span>UI Design</span><span>//</span>
-          <span>API Integration</span><span>//</span>
-          <span>Database Architecture</span><span>//</span>
-          <span>React & Next.js</span><span>//</span>
-          <span>Laravel & Node.js</span><span>//</span>
-          <span>Responsive Design</span><span>//</span>
-          <span>AI Integration</span><span>//</span>
+          <span>{t('marquee.fullstack')}</span><span>//</span>
+          <span>{t('marquee.ui')}</span><span>//</span>
+          <span>{t('marquee.api')}</span><span>//</span>
+          <span>{t('marquee.db')}</span><span>//</span>
+          <span>{t('marquee.react')}</span><span>//</span>
+          <span>{t('marquee.laravel')}</span><span>//</span>
+          <span>{t('marquee.responsive')}</span><span>//</span>
+          <span>{t('marquee.ai')}</span><span>//</span>
+          <span>{t('marquee.fullstack')}</span><span>//</span>
+          <span>{t('marquee.ui')}</span><span>//</span>
+          <span>{t('marquee.api')}</span><span>//</span>
+          <span>{t('marquee.db')}</span><span>//</span>
+          <span>{t('marquee.react')}</span><span>//</span>
+          <span>{t('marquee.laravel')}</span><span>//</span>
+          <span>{t('marquee.responsive')}</span><span>//</span>
+          <span>{t('marquee.ai')}</span><span>//</span>
         </div>
       </div>
 
@@ -321,26 +333,23 @@ export default function ClientShell() {
           <div className="stats-grid">
             <div className="stat fade-up">
               <div className="stat-number">3+</div>
-              <div className="stat-label">Years of experience</div>
+              <div className="stat-label">{t('stats.years')}</div>
               <p className="stat-desc">
-                In full stack web development — spanning freelance, internship,
-                and client projects across various industries.
+                {t('stats.desc1')}
               </p>
             </div>
             <div className="stat fade-up" style={{ transitionDelay: '0.1s' }}>
               <div className="stat-number">20+</div>
-              <div className="stat-label">Projects delivered</div>
+              <div className="stat-label">{t('stats.projects')}</div>
               <p className="stat-desc">
-                From landing pages to complex web applications — shipped with
-                clean code and attention to every detail.
+                {t('stats.desc2')}
               </p>
             </div>
             <div className="stat fade-up" style={{ transitionDelay: '0.2s' }}>
               <div className="stat-number">10+</div>
-              <div className="stat-label">Technologies</div>
+              <div className="stat-label">{t('stats.technologies')}</div>
               <p className="stat-desc">
-                React, Next.js, Laravel, Node.js, Tailwind CSS, PostgreSQL,
-                MySQL, and more — always learning.
+                {t('stats.desc3')}
               </p>
             </div>
           </div>
@@ -356,40 +365,25 @@ export default function ClientShell() {
         </ErrorBoundary>
       </div>
 
-      {/* ── MARQUEE 2 ───────────────────────────────────────── */}
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          <span>E-Commerce Platform</span><span>//</span>
-          <span>Analytics Dashboard</span><span>//</span>
-          <span>Company CMS</span><span>//</span>
-          <span>Gorontalo</span><span>//</span>
-          <span>Indonesia</span><span>//</span>
-          <span>Open To Work</span><span>//</span>
-          <span>E-Commerce Platform</span><span>//</span>
-          <span>Analytics Dashboard</span><span>//</span>
-          <span>Company CMS</span><span>//</span>
-          <span>Gorontalo</span><span>//</span>
-          <span>Indonesia</span><span>//</span>
-          <span>Open To Work</span><span>//</span>
-        </div>
-      </div>
-
-      {/* ── STACK EXPERIENCE ────────────────────────────────── */}
+      {/* ── PROCESS ───────────────────────────────────────── */}
       <ErrorBoundary fallback={null}>
         <Suspense fallback={null}>
-          <StackExperience />
+          <ProcessSection />
         </Suspense>
       </ErrorBoundary>
 
       {/* ── CTA /contact ────────────────────────────────────── */}
       <section className="cta-band" id="contact">
-        <div className="ghost-word" aria-hidden="true">SAMSU</div>
+        <div className="ghost-word" aria-hidden="true">SAMSU ALAM</div>
         <div className="container cta-inner">
           <span className="eyebrow">/contact</span>
           <div className="cta-words">
-            <div className="fade-up">Let's build</div>
-            <div className="fade-up">the next</div>
-            <div className="fade-up">chapter.</div>
+            <div className="fade-up">{t('cta.letsBuild')}</div>
+            <div className="fade-up">
+              FROM <span className="text-[#F5C518]">IDEA</span> TO{' '}
+              <span className="text-[#F5C518]">REALITY</span>
+              <span className="inline-block w-[0.15em] h-[0.15em] rounded-full bg-[#F5C518] align-baseline mb-[0.08em] ml-[0.12em]" />
+            </div>
           </div>
           <a className="cta-mail" href="mailto:samsualam@email.com">
             samsualam@email.com
@@ -400,11 +394,11 @@ export default function ClientShell() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              LinkedIn
+              {t('cta.linkedin')}
             </a>
-            <a href="#contact">Contact page</a>
+            <a href="#contact">{t('cta.contactPage')}</a>
             <a href="/cv.pdf" download>
-              Download CV
+              {t('cta.downloadCv')}
             </a>
           </div>
         </div>
@@ -416,11 +410,11 @@ export default function ClientShell() {
           [ SAMSU ALAM ]
         </a>
         <div className="footer-copy">
-          Copyright © 2026 Samsu Alam. All Rights Reserved.
+          {t('footer.copy')}
         </div>
         <div className="footer-status">
           <i />
-          <span>OPEN TO WORK</span>
+          <span>{t('footer.status')}</span>
         </div>
       </footer>
     </>
