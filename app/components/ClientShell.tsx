@@ -1,10 +1,23 @@
 'use client';
 
 import { useEffect, useRef, Suspense, useState } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { ErrorBoundary } from './ErrorBoundary';
 import Shuffle from '@/components/Shuffle';
 import { useLanguage } from '../contexts/LanguageContext';
+import LogoLoopComponent from './LogoLoop';
+import StaggeredMenu from './StaggeredMenu';
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiTailwindcss,
+  SiNodedotjs,
+  SiLaravel,
+  SiPostgresql,
+} from 'react-icons/si';
+const LogoLoop = LogoLoopComponent as ComponentType<any>;
 
 // Semua komponen berat dijadikan dynamic (client-only, no SSR)
 const SideRays = dynamic(() => import('@/components/SideRays'), { ssr: false });
@@ -103,31 +116,30 @@ export default function ClientShell() {
 
       {/* ── NAV ─────────────────────────────────────────────── */}
       <nav className="nav" id="site-nav">
-        <a className="nav-logo" href="#">[ SAMSU ALAM ]</a>
+        <a className="nav-logo" href="#">
+          <img
+            src="/images/logo.png"
+            alt="Samsu Alam"
+            className="h-10 md:h-11 w-auto object-contain"
+          />
+          <span>SΛMSU ΛLΛM</span>
+        </a>
         <ul className="nav-links" id="nav-links">
           <li><a href="#">{t('nav.home')}</a></li>
           <li><a href="#work">{t('nav.work')}</a></li>
-          <li><a href="#experience">{t('nav.experience')}</a></li>
+          <li><a href="#process">/proses</a></li>
           <li><a href="#contact">{t('nav.contact')}</a></li>
           <li>
             <a className="nav-cta" href="mailto:samsualam@email.com">
-              {t('nav.cta')}
+              Let's talk →
             </a>
           </li>
         </ul>
-        <button
-          className="nav-lang"
-          onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
-          aria-label="Toggle language"
-        >
-          <span className={lang === 'en' ? 'is-active' : ''}>EN</span>
-          <span className="nav-lang-sep">/</span>
-          <span className={lang === 'id' ? 'is-active' : ''}>ID</span>
-        </button>
+
         <button
           className="nav-toggle"
           id="nav-toggle"
-          aria-label="Open menu"
+          aria-label="Buka menu"
           aria-expanded="false"
           aria-controls="nav-links"
         >
@@ -138,6 +150,19 @@ export default function ClientShell() {
       </nav>
 
       {/* ── HERO ────────────────────────────────────────────── */}
+      <StaggeredMenu
+        items={[
+          { label: '/BERANDA', ariaLabel: 'Ke beranda', link: '#' },
+          { label: '/PROYEK', ariaLabel: 'Lihat proyek', link: '#work' },
+          { label: '/PROSES', ariaLabel: 'Lihat proses', link: '#process' },
+          { label: '/KONTAK', ariaLabel: 'Hubungi saya', link: '#contact' },
+        ]}
+        socialItems={[
+          { label: 'LinkedIn', link: 'https://linkedin.com/in/samsualam' },
+          { label: 'GitHub', link: 'https://github.com' },
+        ]}
+      />
+
       <div className="hero-wrap">
         {/* SideRays — wrapped agar crash tidak merusak halaman */}
         <div
@@ -325,9 +350,9 @@ export default function ClientShell() {
       <section className="stats section" style={{ position: 'relative' }}>
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">/numbers</span>
+            <span className="eyebrow">/angka</span>
             <h2 className="h-display h-lg fade-up">
-              By the <span className="outline">numbers</span>
+              Berdasarkan <span className="outline">angka</span>
             </h2>
           </div>
           <div className="stats-grid">
@@ -380,41 +405,65 @@ export default function ClientShell() {
           <div className="cta-words">
             <div className="fade-up">{t('cta.letsBuild')}</div>
             <div className="fade-up">
-              FROM <span className="text-[#F5C518]">IDEA</span> TO{' '}
-              <span className="text-[#F5C518]">REALITY</span>
+              DARI <span className="text-[#F5C518]">IDE</span> MENJADI{' '}
+              <span className="text-[#F5C518]">NYATA</span>
               <span className="inline-block w-[0.15em] h-[0.15em] rounded-full bg-[#F5C518] align-baseline mb-[0.08em] ml-[0.12em]" />
             </div>
           </div>
           <a className="cta-mail" href="mailto:samsualam@email.com">
             samsualam@email.com
           </a>
-          <div className="cta-links">
-            <a
-              href="https://linkedin.com/in/samsualam"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t('cta.linkedin')}
-            </a>
-            <a href="#contact">{t('cta.contactPage')}</a>
-            <a href="/cv.pdf" download>
-              {t('cta.downloadCv')}
-            </a>
-          </div>
         </div>
       </section>
 
       {/* ── FOOTER ──────────────────────────────────────────── */}
+      <div className="footer-loop" aria-label="Teknologi dan layanan">
+        <LogoLoop
+          logos={[
+            { node: <SiReact />, title: 'React' },
+            { node: <SiNextdotjs />, title: 'Next.js' },
+            { node: <SiTypescript />, title: 'TypeScript' },
+            { node: <SiTailwindcss />, title: 'Tailwind CSS' },
+            { node: <SiNodedotjs />, title: 'Node.js' },
+            { node: <SiLaravel />, title: 'Laravel' },
+            { node: <SiPostgresql />, title: 'PostgreSQL' },
+          ]}
+          speed={80}
+          direction="left"
+          gap={34}
+          pauseOnHover={false}
+          ariaLabel="Teknologi dan layanan"
+          className="footer-logo-loop"
+          renderItem={(item: { node: ReactNode; title: string }) => (
+            <span className="footer-loop-logo" title={item.title} aria-label={item.title}>{item.node}</span>
+          )}
+        />
+      </div>
+
       <footer className="footer">
         <a className="nav-logo" href="#">
-          [ SAMSU ALAM ]
+          <img
+            src="/images/logo.png"
+            alt="Samsu Alam"
+            className="h-10 md:h-11 w-auto object-contain"
+          />
+          <span>SΛMSU ΛLΛM</span>
         </a>
         <div className="footer-copy">
           {t('footer.copy')}
         </div>
-        <div className="footer-status">
-          <i />
-          <span>{t('footer.status')}</span>
+        <div className="footer-links">
+          <a
+            href="https://linkedin.com/in/samsualam"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('cta.linkedin')}
+          </a>
+          <a href="#contact">{t('cta.contactPage')}</a>
+          <a href="/cv.pdf" download>
+            {t('cta.downloadCv')}
+          </a>
         </div>
       </footer>
     </>

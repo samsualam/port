@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import AeroShards from './AeroShards';
 
 type Stage = { id: string; num?: string; title: string; subtitle: string; description?: string };
 
@@ -12,6 +13,38 @@ const stages: Stage[] = [
   { id: '03', num: '03', title: 'BUILD', subtitle: 'FULL-STACK DEVELOPMENT', description: 'Slicing, integrasi, state & data fetching — performa dan aksesibilitas dijaga.' },
   { id: '04', num: '04', title: 'REFINE', subtitle: 'TEST \u2022 OPTIMIZE \u2022 DEPLOY', description: 'QA, audit, optimasi & deploy — rilis aman dengan monitoring.' },
 ];
+
+const stageLabels: Record<string, Partial<Stage>> = {
+  intro: {
+    title: 'CARA SAYA MEMBANGUN PRODUK DIGITAL.',
+    subtitle: '/PROSES — PEMBUKAAN',
+    description: 'Cerita bergulir terpusat — satu tampilan, konten berganti saat Anda menggulir.',
+  },
+  '01': {
+    title: 'PAHAMI',
+    subtitle: 'RISET & KEBUTUHAN',
+    description: 'Kickoff, wawancara pemangku kepentingan, dan pemetaan ruang lingkup — prioritas fitur ditentukan sebelum desain.',
+  },
+  '02': {
+    title: 'SUSUN',
+    subtitle: 'SISTEM & BASIS DATA',
+    description: 'Arsitektur informasi, ERD, dan kontrak API — fondasi yang dapat berkembang sebelum coding.',
+  },
+  '03': {
+    title: 'BANGUN',
+    subtitle: 'PENGEMBANGAN FULL STACK',
+    description: 'Slicing, integrasi, state, dan pengambilan data — performa serta aksesibilitas tetap dijaga.',
+  },
+  '04': {
+    title: 'SEMPURNAKAN',
+    subtitle: 'UJI • OPTIMALKAN • RILIS',
+    description: 'QA, audit, optimasi, dan rilis — peluncuran aman dengan pemantauan.',
+  },
+};
+
+function getStageLabel(stage: Stage) {
+  return { ...stage, ...stageLabels[stage.id] };
+}
 
 function SplitReveal({ text, active }: { text: string; active: boolean }) {
   const words = text.split(' ');
@@ -286,16 +319,48 @@ export default function ProcessSection() {
     setStage((p) => (p === next ? p : next));
   });
 
-  const current = stages[stage];
+  const current = getStageLabel(stages[stage]);
   const isIntro = stage === 0;
   const isBuild = stage === 3;
 
   return (
-    <section ref={ref} className="relative h-[500vh] overflow-x-clip bg-black">
+    <section id="process" ref={ref} className="relative h-[500vh] overflow-x-clip bg-black">
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden bg-black">
         
-        {/* Focused 3D Geometric Blocks Background */}
-        <Geometric3DFocusedBackground stage={stage} />
+        {/* AeroShards background */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <AeroShards
+            backgroundColor="#050505"
+            shardColor="#8A7418"
+            accentColor="#F5C518"
+            placement="full"
+            flow="stream"
+            material="satin"
+            detail="fine"
+            effect="none"
+            scale={1}
+            spread={1}
+            depth={1}
+            speed={0.7}
+            spin={0.8}
+            interaction="none"
+            density={0.85}
+            shardSize={0.9}
+            stretch={1.1}
+            turbulence={0.8}
+            glow={0.7}
+            edgeSoftness={2}
+            bloom={0.35}
+            grain={0.035}
+            chromaticAberration={0.002}
+            transitionDuration={1}
+            interactionRadius={1.5}
+            interactionStrength={0.5}
+            rippleIntensity={0}
+            holdToGather={false}
+            onError={(error: Error) => console.error('[AeroShards] WebGPU error:', error)}
+          />
+        </div>
 
         {/* decorative dot matrix right */}
         <div
@@ -319,13 +384,13 @@ export default function ProcessSection() {
                 {isIntro ? (
                   <h2 className="h-display mx-auto mt-3 max-w-[14ch] text-[clamp(48px,8vw,104px)] leading-[0.86] text-center">
                     <span className="block text-white">
-                      <SplitReveal text="HOW I BUILD" active={true} />
+                      <SplitReveal text="CARA SAYA" active={true} />
                     </span>
                     <span className="block text-white">
-                      <SplitReveal text="DIGITAL" active={true} />
+                      <SplitReveal text="MEMBANGUN PRODUK" active={true} />
                     </span>
                     <span className="block" style={{ color: 'transparent', WebkitTextStroke: '2px #F5C518' }}>
-                      <SplitReveal text="PRODUCTS." active={true} />
+                      <SplitReveal text="DIGITAL." active={true} />
                     </span>
                   </h2>
                 ) : (
@@ -334,7 +399,7 @@ export default function ProcessSection() {
                       {/* dekoratif 01-04 — SATU angka besar outline, overlap huruf pertama */}
                       <span
                         aria-hidden
-                        className="pointer-events-none absolute -left-[0.35em] top-[18%] -translate-y-1/2 select-none font-display text-[clamp(64px,10vw,118px)] font-black leading-none opacity-[0.68]"
+                        className="pointer-events-none absolute -left-[0.55em] top-[8%] -translate-y-1/2 select-none font-display text-[clamp(64px,10vw,118px)] font-black leading-none opacity-[0.68]"
                         style={{ color: 'transparent', WebkitTextStroke: '3px #F5C518' }}
                       >
                         {current.num}
@@ -386,7 +451,8 @@ export default function ProcessSection() {
           <div className="mx-auto mt-3 flex max-w-[520px] justify-between font-mono text-[10px] uppercase tracking-[0.16em]">
             {stages.slice(1).map((s, i) => {
               const idx = i + 1;
-              return <span key={s.id} className={stage === idx ? 'text-white' : 'text-[#333]'}>{s.num} — {s.title}</span>;
+              const label = getStageLabel(s);
+              return <span key={s.id} className={stage === idx ? 'text-white' : 'text-[#333]'}>{s.num} — {label.title}</span>;
             })}
           </div>
         </div>

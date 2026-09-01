@@ -8,11 +8,11 @@ import { useLanguage } from '../contexts/LanguageContext';
 const experiences = [
   {
     num: '01',
-    company: 'Freelance',
+    company: 'Pekerja Lepas',
     role: { en: 'Full Stack Web Developer', id: 'Pengembang Web Full Stack' },
-    desc: { en: 'Developed and delivered custom web applications for various clients across different industries. Handled everything from UI/UX design to backend development, database architecture, and cloud deployment.', id: 'Mengembangkan dan mengirimkan aplikasi web kustom untuk berbagai klien di berbagai industri. Menangani everything dari desain UI/UX hingga pengembangan backend, arsitektur database, dan deployment cloud.' },
+    desc: { en: 'Developed and delivered custom web applications for various clients across different industries. Handled everything from UI/UX design to backend development, database architecture, and cloud deployment.', id: 'Mengembangkan dan mengirimkan aplikasi web kustom untuk berbagai klien di berbagai industri. Menangani seluruh proses dari desain UI/UX hingga pengembangan backend, arsitektur basis data, dan deployment cloud.' },
     tags: ['React', 'Next.js', 'Laravel', 'MySQL', 'Tailwind CSS'],
-    period: '2023 — Present',
+    period: '2023 — Sekarang',
   },
   {
     num: '02',
@@ -27,7 +27,7 @@ const experiences = [
     company: 'Universitas Negeri Gorontalo',
     role: { en: 'Informatics Engineering — S1', id: 'Teknik Informatika — S1' },
     desc: { en: "Bachelor's degree in Informatics Engineering. Focused on web development, algorithms, data structures, database systems, and software engineering principles. Active in campus tech community.", id: "Sarjana Teknik Informatika. Berfokus pada pengembangan web, algoritma, struktur data, sistem database, dan prinsip rekayasa perangkat lunak. Aktif di komunitas teknologi kampus." },
-    tags: ['Algorithms', 'Database', 'Web Development', 'OOP'],
+    tags: ['Algoritma', 'Basis Data', 'Pengembangan Web', 'OOP'],
     period: '2020 — 2024',
   },
 ];
@@ -97,7 +97,7 @@ export default function StackExperience() {
         {/* Head */}
         <div className="stack-head">
           <div>
-            <span className="eyebrow">/experience</span>
+            <span className="eyebrow">/pengalaman</span>
             <h2 className="h-display h-lg">
               {t('experience.heading').split(' ')[0]} <span className="outline">{t('experience.heading').split(' ')[1]}</span>
             </h2>
