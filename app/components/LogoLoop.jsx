@@ -222,9 +222,10 @@ export const LogoLoop = memo(
       () => ({
         '--logoloop-gap': `${gap}px`,
         '--logoloop-logoHeight': `${logoHeight}px`,
+        '--logoloop-seqWidth': `${seqWidth}px`,
         ...(fadeOutColor && { '--logoloop-fadeColor': fadeOutColor })
       }),
-      [gap, logoHeight, fadeOutColor]
+      [gap, logoHeight, seqWidth, fadeOutColor]
     );
 
     const rootClasses = useMemo(

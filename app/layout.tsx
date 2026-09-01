@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   title: "Samsu Alam — Full Stack Developer",
   description:
     "Samsu Alam — Full Stack Developer based in Gorontalo, Indonesia. Building modern, responsive web applications.",
+  icons: {
+    icon: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({
