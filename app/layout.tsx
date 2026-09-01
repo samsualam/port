@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, DM_Sans, Press_Start_2P } from "next/font/google";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -39,6 +40,7 @@ export default function RootLayout({
         <LanguageProvider>
           {children}
         </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   );
