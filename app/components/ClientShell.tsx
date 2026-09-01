@@ -252,7 +252,7 @@ export default function ClientShell() {
                   shuffleTimes={1}
                   ease="power3.out"
                   stagger={0.03}
-                  threshold={1}
+                  threshold={0.1}
                   rootMargin="0px"
                   triggerOnce={true}
                   triggerOnHover
@@ -276,7 +276,7 @@ export default function ClientShell() {
                   shuffleTimes={1}
                   ease="power3.out"
                   stagger={0.03}
-                  threshold={1}
+                  threshold={0.1}
                   rootMargin="0px"
                   triggerOnce={true}
                   triggerOnHover
